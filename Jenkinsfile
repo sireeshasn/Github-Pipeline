@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODEJS_HOME = tool name: "NodeJS", type: 'NodeJSInstallation'
+        NODEJS_HOME = tool name: 'NodeJS', type: 'NodeJSInstallation'
         PATH = "${NODEJS_HOME}/bin:${env.PATH}"
     }
 
@@ -54,15 +54,19 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            cleanWs()
+            node {
+                echo 'Cleaning up...'
+                cleanWs()
+            }
         }
         success {
             echo 'Pipeline succeeded!'
         }
         failure {
-            echo 'Pipeline failed!'
-            // Add alerting mechanism here, e.g., email or Slack notification
+            node {
+                echo 'Pipeline failed!'
+                // Add alerting mechanism here, e.g., email or Slack notification
+            }
         }
     }
 }
