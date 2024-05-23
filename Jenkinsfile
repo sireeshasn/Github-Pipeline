@@ -54,15 +54,21 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            cleanWs()
+            script {
+                echo 'Cleaning up...'
+                cleanWs()
+            }
         }
         success {
-            echo 'Pipeline succeeded!'
+            script {
+                echo 'Pipeline succeeded!'
+            }
         }
         failure {
-            echo 'Pipeline failed!'
-            // Add alerting mechanism here, e.g., email or Slack notification
+            script {
+                echo 'Pipeline failed!'
+                // Add alerting mechanism here, e.g., email or Slack notification
+            }
         }
     }
 }
