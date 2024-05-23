@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/sireeshasn/sit725-2024-t1-prac6-main.git'
+                git branch: 'main', url: 'https://github.com/sireeshasn/Github-Pipeline.git'
             }
         }
         stage('Build') {
@@ -28,7 +28,7 @@ pipeline {
             steps {
                 echo 'Analyzing Code Quality...'
                 withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner -Dsonar.projectKey=sit725-2024-t1-prac6-main -Dsonar.sources=. -Dsonar.host.url=http://your-sonarqube-server -Dsonar.login=your-sonarqube-token'
+                    sh 'sonar-scanner -Dsonar.projectKey=Github-Pipeline -Dsonar.sources=. -Dsonar.host.url=http://your-sonarqube-server -Dsonar.login=your-sonarqube-token'
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
         stage('Monitoring and Alerting') {
             steps {
                 echo 'Setting up Monitoring and Alerting...'
-                sh 'curl -X POST -H "Content-type: application/json" -d \'{"service":"sit725-2024-t1-prac6-main","description":"Monitor description"}\' "https://api.datadoghq.com/api/v1/service_checks?api_key=YOUR_API_KEY"'
+                sh 'curl -X POST -H "Content-type: application/json" -d \'{"service":"Github-Pipeline","description":"Monitor description"}\' "https://api.datadoghq.com/api/v1/service_checks?api_key=YOUR_API_KEY"'
             }
         }
     }
