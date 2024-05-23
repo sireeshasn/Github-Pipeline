@@ -14,19 +14,22 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo 'Building...'
+                echo 'Building the application...'
                 sh 'npm install'
+                // Create a build artifact
+                sh 'tar -czf build-artifact.tar.gz *'
+                archiveArtifacts artifacts: 'build-artifact.tar.gz', allowEmptyArchive: false
             }
         }
         stage('Test') {
             steps {
-                echo 'Testing...'
+                echo 'Running tests...'
                 sh 'npm test'
             }
         }
         stage('Code Quality Analysis') {
             steps {
-                echo 'Analyzing Code Quality...'
+                echo 'Running code quality analysis...'
                 withSonarQubeEnv('SonarQube') {
                     sh 'sonar-scanner -Dsonar.projectKey=Github-Pipeline -Dsonar.sources=. -Dsonar.host.url=http://your-sonarqube-server -Dsonar.login=your-sonarqube-token'
                 }
@@ -35,18 +38,22 @@ pipeline {
         stage('Deploy to Test Environment') {
             steps {
                 echo 'Deploying to Test Environment...'
-                sh 'scp -r ./* user@test-server:/path/to/deploy'
+                // Example: Deploy to a Docker container
+                sh 'docker-compose up -d'
             }
         }
         stage('Release to Production') {
             steps {
                 echo 'Releasing to Production...'
-                sh 'scp -r ./* user@prod-server:/path/to/deploy'
+                // Example: Deploy to a production server
+                sh 'scp build-artifact.tar.gz user@prod-server:/path/to/deploy'
+                sh 'ssh user@prod-server "tar -xzf /path/to/deploy/build-artifact.tar.gz -C /path/to/deploy"'
             }
         }
         stage('Monitoring and Alerting') {
             steps {
                 echo 'Setting up Monitoring and Alerting...'
+                // Example: Send a monitoring request to Datadog
                 sh 'curl -X POST -H "Content-type: application/json" -d \'{"service":"Github-Pipeline","description":"Monitor description"}\' "https://api.datadoghq.com/api/v1/service_checks?api_key=YOUR_API_KEY"'
             }
         }
@@ -54,21 +61,15 @@ pipeline {
 
     post {
         always {
-            script {
-                echo 'Cleaning up...'
-                cleanWs()
-            }
+            echo 'Cleaning up...'
+            cleanWs()
         }
         success {
-            script {
-                echo 'Pipeline succeeded!'
-            }
+            echo 'Pipeline succeeded!'
         }
         failure {
-            script {
-                echo 'Pipeline failed!'
-                // Add alerting mechanism here, e.g., email or Slack notification
-            }
+            echo 'Pipeline failed!'
+            // Add alerting mechanism here, e.g., email or Slack notification
         }
     }
 }
