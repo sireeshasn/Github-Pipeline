@@ -54,19 +54,15 @@ pipeline {
 
     post {
         always {
-            node {
-                echo 'Cleaning up...'
-                cleanWs()
-            }
+            echo 'Cleaning up...'
+            cleanWs()
         }
         success {
             echo 'Pipeline succeeded!'
         }
         failure {
-            node {
-                echo 'Pipeline failed!'
-                // Add alerting mechanism here, e.g., email or Slack notification
-            }
+            echo 'Pipeline failed!'
+            // Add alerting mechanism here, e.g., email or Slack notification
         }
     }
 }
